@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
-    /* ... (СТИЛИ ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ, ОНИ ТАКИЕ ЖЕ КАК В ПРОШЛЫЙ РАЗ) ... */
     :root {
       --bg-main: #0f172a; --bg-card: #1e293b; --bg-hover: #334155;
       --text-main: #f8fafc; --text-muted: #94a3b8;
@@ -53,6 +52,46 @@
     .menu-item.danger .menu-icon svg { stroke: var(--danger); }
     .menu-item.danger .menu-arrow { stroke: var(--danger); }
     .footer { text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+
+    /* СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА (РЕФЕРАЛЬНАЯ СИСТЕМА) */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px; backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: var(--bg-card); width: 100%; max-width: 400px;
+      border-radius: var(--radius); padding: 24px;
+      border: 1px solid var(--border); text-align: center;
+      animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .modal-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+    .ref-input-group {
+      display: flex; gap: 8px; margin-bottom: 20px;
+    }
+    .ref-input {
+      flex-grow: 1; padding: 12px; background: var(--bg-main);
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-main); font-family: inherit; font-size: 0.85rem;
+      outline: none;
+    }
+    .btn-copy {
+      background: var(--accent); color: #fff; border: none;
+      padding: 0 16px; border-radius: 8px; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-copy:active { opacity: 0.8; }
+    .btn-close {
+      width: 100%; padding: 14px; background: var(--bg-hover);
+      color: var(--text-main); border: none; border-radius: 12px;
+      font-weight: 600; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-close:active { background: var(--border); }
+
     @media (max-width: 360px) {
       .info-row { padding: 12px; font-size: 0.85rem; }
       .info-value { font-size: 0.85rem; }
@@ -66,13 +105,11 @@
 
   <div class="container">
     
-    <!-- ШАПКА -->
     <div class="header">
       <div class="logo">
         <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
         ShadowNet
       </div>
-      <!-- ДИНАМИЧЕСКИЙ БАЛАНС -->
       <div class="balance" id="ui-balance">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8M8 14h8"/></svg>
         Загрузка...
@@ -148,18 +185,11 @@
     </div>
 
     <div class="menu-list">
-      <a class="menu-item" onclick="showAlert('Поделиться', 'Ссылка на бота скопирована.')">
+      <!-- Кнопка "Поделиться" теперь вызывает модальное окно -->
+      <a class="menu-item" onclick="openShareModal()">
         <div class="menu-item-left">
           <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
           Поделиться с другом
-        </div>
-        <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-
-      <a class="menu-item" onclick="showAlert('Сменить ссылки', 'Генерация новых ключей доступа.')">
-        <div class="menu-item-left">
-          <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          Сменить все ссылки в ЛК
         </div>
         <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
@@ -188,34 +218,45 @@
 
   </div>
 
+  <!-- МОДАЛЬНОЕ ОКНО ДЛЯ РЕФЕРАЛЬНОЙ СИСТЕМЫ -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal-content">
+      <h3 class="modal-title">Пригласи друга 🤝</h3>
+      <p class="modal-desc">Отправь эту ссылку другу. Когда он подключится, вы оба получите бонусы на баланс!</p>
+      
+      <div class="ref-input-group">
+        <input type="text" class="ref-input" id="refLinkInput" readonly value="Загрузка...">
+        <button class="btn-copy" onclick="copyRefLink()">Копировать</button>
+      </div>
+      
+      <button class="btn-close" onclick="closeShareModal()">Закрыть</button>
+    </div>
+  </div>
+
   <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
 
-    // ==========================================
-    // НАСТРОЙКА БЭКЕНДА
-    // Когда выложишь сервер на хостинг, замени 127.0.0.1:8000 на свой домен.
-    // ==========================================
+    // Ссылка на твой бэкенд
     const BACKEND_URL = 'http://127.0.0.1:8000'; 
+    
+    let currentRefLink = ''; // Сюда сохраним ссылку с сервера
 
     async function loadUserData() {
       const user = tg.initDataUnsafe?.user;
       
       if (user) {
-        // Сразу ставим ID и Имя из телеги (они не требуют бэкенда)
         document.getElementById('ui-name').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
         document.getElementById('ui-tgid').textContent = user.id;
 
         try {
-          // Делаем запрос к нашему Python-серверу
           const response = await fetch(`${BACKEND_URL}/api/user/${user.id}`);
-          
           if (!response.ok) throw new Error('Ошибка сети');
           
           const data = await response.json();
 
-          // Подставляем данные с сервера в HTML
+          // Заполняем данные профиля
           document.getElementById('ui-balance').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8M8 14h8"/></svg> ${data.balance}`;
           document.getElementById('ui-sub').textContent = data.subscription;
           document.getElementById('ui-price').textContent = data.price;
@@ -224,21 +265,49 @@
           document.getElementById('ui-account-id').textContent = data.account_id;
           
           document.getElementById('ui-traffic-text').textContent = `${data.traffic_used} / ${data.traffic_total} ГБ`;
-          
-          // Высчитываем процент заполнения полоски трафика
           const percent = (data.traffic_used / data.traffic_total) * 100;
           document.getElementById('ui-traffic-bar').style.width = `${percent}%`;
 
+          // Сохраняем реферальную ссылку
+          currentRefLink = data.referral_link;
+          document.getElementById('refLinkInput').value = currentRefLink;
+
         } catch (error) {
-          console.error("Ошибка загрузки данных с бэкенда:", error);
+          console.error("Ошибка загрузки данных:", error);
           document.getElementById('ui-balance').textContent = "Ошибка";
         }
       }
     }
 
-    // Запускаем загрузку данных
     loadUserData();
 
+    // --- ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ---
+    function openShareModal() {
+      if (currentRefLink) {
+        document.getElementById('shareModal').classList.add('active');
+      } else {
+        tg.showAlert('Ошибка: не удалось загрузить вашу реферальную ссылку.');
+      }
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('active');
+    }
+
+    function copyRefLink() {
+      const input = document.getElementById('refLinkInput');
+      input.select();
+      input.setSelectionRange(0, 99999); // Для мобильных устройств
+      
+      navigator.clipboard.writeText(input.value).then(() => {
+        tg.showAlert('Реферальная ссылка скопирована!');
+        closeShareModal();
+      }).catch(() => {
+        tg.showAlert('Ошибка копирования');
+      });
+    }
+
+    // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
     function showAlert(title, message) {
       tg.showPopup({
         title: title,
