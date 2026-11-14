@@ -1,16 +1,303 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Mini App</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f0f0f0; }
-        h1 { color: #333; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VPN Профиль</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: var(--tg-theme-bg-color, #121212);
+      --text: var(--tg-theme-text-color, #ffffff);
+      --hint: var(--tg-theme-hint-color, #999999);
+      --button: var(--tg-theme-button-color, #2481cc);
+      --button-text: var(--tg-theme-button-text-color, #ffffff);
+      --card: #1e1e1e;
+      --accent: #34c759;
+      --border: #333333;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--card);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--border);
+      object-fit: cover;
+    }
+
+    .user-info h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .user-info p {
+      font-size: 0.9rem;
+      color: var(--hint);
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      margin-left: 8px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .subscription-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .status-badge {
+      background: rgba(52, 199, 89, 0.15);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 75%;
+      border-radius: 4px;
+    }
+
+    .sub-details {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--hint);
+    }
+
+    .app-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card);
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .app-item:active {
+      background: var(--border);
+    }
+
+    .app-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .app-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .app-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .app-desc {
+      font-size: 0.8rem;
+      color: var(--hint);
+    }
+
+    .connect-btn {
+      background: var(--button);
+      color: var(--button-text);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .connect-btn:active {
+      opacity: 0.8;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--hint);
+      font-size: 0.8rem;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Привет, это мой Mini App! 🚀</h1>
-    <p>Скоро здесь будет VPN.</p>
+
+  <div class="container">
+    
+    <div class="header">
+      <img src="" alt="Avatar" class="avatar" id="userAvatar">
+      <div class="user-info">
+        <h1 id="userName">Загрузка...</h1>
+        <p id="userUsername">@username</p>
+      </div>
+    </div>
+
+    <h2 class="section-title">Ваша подписка</h2>
+    <div class="card">
+      <div class="subscription-status">
+        <span style="font-weight: 600;">Статус:</span>
+        <span class="status-badge">Активна</span>
+      </div>
+      <div>Действует до: <strong>15 декабря 2025</strong></div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="trafficFill"></div>
+      </div>
+      <div class="sub-details">
+        <span>Трафик: 75 ГБ из 100 ГБ</span>
+        <span>Осталось: 25 дней</span>
+      </div>
+    </div>
+
+    <h2 class="section-title">Подключение</h2>
+    <div class="app-list">
+      
+      <div class="app-item" onclick="showAlert('Приложение Happ', 'Скачайте Happ из App Store или Google Play. Ваш ключ будет скопирован в буфер обмена.')">
+        <div class="app-info">
+          <div class="app-icon">🚀</div>
+          <div>
+            <div class="app-name">Happ</div>
+            <div class="app-desc">iOS / Android / Windows</div>
+          </div>
+        </div>
+        <button class="connect-btn">Ключ</button>
+      </div>
+
+      <div class="app-item" onclick="showAlert('Приложение V2RayTun', 'Скачайте V2RayTun и вставьте скопированный ключ.')">
+        <div class="app-info">
+          <div class="app-icon">⚡️</div>
+          <div>
+            <div class="app-name">V2RayTun</div>
+            <div class="app-desc">Универсальный клиент</div>
+          </div>
+        </div>
+        <button class="connect-btn">Ключ</button>
+      </div>
+
+      <div class="app-item" onclick="showAlert('Streisand', 'Приложение для устройств Apple (iOS/macOS).')">
+        <div class="app-info">
+          <div class="app-icon">🍏</div>
+          <div>
+            <div class="app-name">Streisand</div>
+            <div class="app-desc">Только для Apple</div>
+          </div>
+        </div>
+        <button class="connect-btn">Ключ</button>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      VPN Service © 2025
+    </div>
+
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    
+    tg.ready();
+    tg.expand();
+
+    const user = tg.initDataUnsafe?.user;
+
+    if (user) {
+      document.getElementById('userName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+      
+      if (user.username) {
+        document.getElementById('userUsername').textContent = '@' + user.username;
+      } else {
+        document.getElementById('userUsername').textContent = 'ID: ' + user.id;
+      }
+
+      if (user.photo_url) {
+        document.getElementById('userAvatar').src = user.photo_url;
+      } else {
+        const avatar = document.getElementById('userAvatar');
+        avatar.style.display = 'none';
+      }
+    }
+
+    function showAlert(title, message) {
+      tg.showPopup({
+        title: title,
+        message: message,
+        buttons: [{type: 'ok'}]
+      });
+    }
+  </script>
 </body>
 </html>
