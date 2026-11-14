@@ -7,190 +7,236 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg: var(--tg-theme-bg-color, #121212);
-      --text: var(--tg-theme-text-color, #ffffff);
-      --hint: var(--tg-theme-hint-color, #999999);
-      --button: var(--tg-theme-button-color, #2481cc);
-      --button-text: var(--tg-theme-button-text-color, #ffffff);
-      --card: #1e1e1e;
-      --accent: #34c759;
-      --border: #333333;
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #0ea5e9;
+      --accent-gradient: linear-gradient(135deg, #0ea5e9, #3b82f6);
+      --danger: #ef4444;
+      --border: #334155;
+      --radius: 16px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    
     body {
       font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding: 20px;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.4;
+      padding: 16px;
+      padding-bottom: 40px;
       min-height: 100vh;
     }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+    .container { max-width: 500px; margin: 0 auto; }
 
+    /* ШАПКА */
     .header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 30px;
-      padding: 20px;
-      background: var(--card);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-    }
-
-    .avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: var(--border);
-      object-fit: cover;
-    }
-
-    .user-info h1 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .user-info p {
-      font-size: 0.9rem;
-      color: var(--hint);
-    }
-
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      margin-left: 8px;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 20px;
-      border: 1px solid var(--border);
-      margin-bottom: 24px;
-    }
-
-    .subscription-status {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
       margin-bottom: 16px;
     }
 
-    .status-badge {
-      background: rgba(52, 199, 89, 0.15);
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo svg { width: 28px; height: 28px; fill: var(--accent); }
+
+    .balance {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      background: rgba(14, 165, 233, 0.1);
       color: var(--accent);
       padding: 6px 12px;
       border-radius: 100px;
-      font-size: 0.85rem;
-      font-weight: 600;
     }
 
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      margin-top: 12px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      width: 75%;
-      border-radius: 4px;
-    }
-
-    .sub-details {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
-      font-size: 0.85rem;
-      color: var(--hint);
-    }
-
-    .app-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .app-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--card);
-      padding: 16px 20px;
-      border-radius: 16px;
+    /* ОСНОВНАЯ КАРТОЧКА ПРОФИЛЯ */
+    .profile-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
       border: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.2s;
+      overflow: hidden;
+      margin-bottom: 16px;
     }
 
-    .app-item:active {
-      background: var(--border);
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
     }
 
-    .app-info {
+    .info-row:last-child { border-bottom: none; }
+
+    .info-label {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 10px;
+      color: var(--text-muted);
     }
 
-    .app-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--bg);
+    .info-label svg { width: 18px; height: 18px; stroke: var(--text-muted); fill: none; }
+
+    .info-value {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .icon-btn:active { background: var(--border); color: var(--text-main); }
+    .icon-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
+    .progress-container {
+      padding: 0 16px 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 17%; /* Имитация 17.2 из 100 */
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
     }
 
-    .app-name {
+    .expiry-info {
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .expiry-info strong { color: var(--text-main); float: right; font-weight: 600;}
+
+    .btn-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: calc(100% - 32px);
+      margin: 0 16px 16px 16px;
+      padding: 16px;
+      background: var(--accent-gradient);
+      color: #fff;
       font-weight: 600;
       font-size: 1rem;
-    }
-
-    .app-desc {
-      font-size: 0.8rem;
-      color: var(--hint);
-    }
-
-    .connect-btn {
-      background: var(--button);
-      color: var(--button-text);
       border: none;
-      padding: 10px 16px;
       border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.9rem;
       cursor: pointer;
       transition: opacity 0.2s;
     }
+    .btn-main:active { opacity: 0.8; }
+    .btn-main svg { width: 18px; height: 18px; stroke: #fff; fill: none; }
 
-    .connect-btn:active {
-      opacity: 0.8;
+    /* МЕНЮ */
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .menu-item:active { background: var(--bg-hover); }
+
+    .menu-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .menu-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .menu-icon svg { width: 20px; height: 20px; stroke: var(--text-muted); fill: none; }
+
+    .menu-arrow {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      fill: none;
+    }
+
+    .menu-item.danger { color: var(--danger); }
+    .menu-item.danger .menu-icon svg { stroke: var(--danger); }
+    .menu-item.danger .menu-arrow { stroke: var(--danger); }
+
+    /* ФУТЕР */
     .footer {
       text-align: center;
-      color: var(--hint);
-      font-size: 0.8rem;
-      margin-top: 40px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
   </style>
 </head>
@@ -198,104 +244,187 @@
 
   <div class="container">
     
+    <!-- ШАПКА -->
     <div class="header">
-      <img src="" alt="Avatar" class="avatar" id="userAvatar">
-      <div class="user-info">
-        <h1 id="userName">Загрузка...</h1>
-        <p id="userUsername">@username</p>
+      <div class="logo">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+        ShadowNet
+      </div>
+      <div class="balance">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8M8 14h8"/></svg>
+        0 ₽
       </div>
     </div>
 
-    <h2 class="section-title">Ваша подписка</h2>
-    <div class="card">
-      <div class="subscription-status">
-        <span style="font-weight: 600;">Статус:</span>
-        <span class="status-badge">Активна</span>
+    <!-- ПРОФИЛЬ И ПОДПИСКА -->
+    <div class="profile-card">
+      <div class="info-row">
+        <div class="info-label">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Никнейм
+        </div>
+        <div class="info-value">
+          <span id="userName">Загрузка...</span>
+          <button class="icon-btn"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+        </div>
       </div>
-      <div>Действует до: <strong>15 декабря 2025</strong></div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="trafficFill"></div>
+
+      <div class="info-row">
+        <div class="info-label">
+          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          Подписка
+        </div>
+        <div class="info-value">
+          <span>Radiant_Monolith</span>
+          <button class="icon-btn"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+        </div>
       </div>
-      <div class="sub-details">
-        <span>Трафик: 75 ГБ из 100 ГБ</span>
-        <span>Осталось: 25 дней</span>
+
+      <div class="info-row">
+        <div class="info-label">
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          TG ID
+        </div>
+        <div class="info-value">
+          <span id="userId">...</span>
+          <button class="icon-btn" onclick="copyText('userId')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+        </div>
       </div>
+
+      <div class="info-row">
+        <div class="info-label">
+          <svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Цена
+        </div>
+        <div class="info-value">275 ₽ / 30 дней</div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">
+          <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          Устройства
+        </div>
+        <div class="info-value">
+          1 / 3
+          <button class="icon-btn"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+        </div>
+      </div>
+
+      <div class="progress-container">
+        <div class="info-row" style="border: none; padding: 14px 0 0 0;">
+          <div class="info-label">
+            <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+            Трафик
+          </div>
+          <div class="info-value" style="font-size: 0.85rem;">17.2 / 100 ГБ</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="expiry-info">
+        Подписка истекла <br>
+        <strong>27.10.2026 06:59 МСК</strong>
+        <div style="clear: both;"></div>
+      </div>
+
+      <button class="btn-main" onclick="showAlert('Оплата', 'Здесь будет переход на оплату.')">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Продлить VPN
+      </button>
     </div>
 
-    <h2 class="section-title">Подключение</h2>
-    <div class="app-list">
-      
-      <div class="app-item" onclick="showAlert('Приложение Happ', 'Скачайте Happ из App Store или Google Play. Ваш ключ будет скопирован в буфер обмена.')">
-        <div class="app-info">
-          <div class="app-icon">🚀</div>
-          <div>
-            <div class="app-name">Happ</div>
-            <div class="app-desc">iOS / Android / Windows</div>
-          </div>
+    <!-- МЕНЮ -->
+    <div class="menu-list">
+      <a class="menu-item" onclick="showAlert('Халява', 'Тут будет промокод или реферальная программа.')">
+        <div class="menu-item-left">
+          <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          Халява!
         </div>
-        <button class="connect-btn">Ключ</button>
-      </div>
+        <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
 
-      <div class="app-item" onclick="showAlert('Приложение V2RayTun', 'Скачайте V2RayTun и вставьте скопированный ключ.')">
-        <div class="app-info">
-          <div class="app-icon">⚡️</div>
-          <div>
-            <div class="app-name">V2RayTun</div>
-            <div class="app-desc">Универсальный клиент</div>
-          </div>
+      <a class="menu-item" onclick="showAlert('Серверы', 'Список доступных локаций.')">
+        <div class="menu-item-left">
+          <div class="menu-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+          Серверы ShadowNet
         </div>
-        <button class="connect-btn">Ключ</button>
-      </div>
+        <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
 
-      <div class="app-item" onclick="showAlert('Streisand', 'Приложение для устройств Apple (iOS/macOS).')">
-        <div class="app-info">
-          <div class="app-icon">🍏</div>
-          <div>
-            <div class="app-name">Streisand</div>
-            <div class="app-desc">Только для Apple</div>
-          </div>
+      <a class="menu-item" onclick="showAlert('Поделиться', 'Ссылка на бота скопирована.')">
+        <div class="menu-item-left">
+          <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+          Поделиться с другом
         </div>
-        <button class="connect-btn">Ключ</button>
-      </div>
+        <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
 
+      <a class="menu-item" onclick="showAlert('Сменить ссылки', 'Генерация новых ключей доступа.')">
+        <div class="menu-item-left">
+          <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          Сменить все ссылки в ЛК
+        </div>
+        <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+
+      <a class="menu-item" onclick="showAlert('Помощь', 'Открытие чата с поддержкой.')">
+        <div class="menu-item-left">
+          <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          Помощь
+        </div>
+        <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+
+      <a class="menu-item danger" onclick="showAlert('Выход', 'Вы вышли из аккаунта.')">
+        <div class="menu-item-left">
+          <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+          Выйти
+        </div>
+        <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
     </div>
 
     <div class="footer">
-      VPN Service © 2025
+      ID аккаунта: <span id="accountId">loading...</span>
+      <button class="icon-btn" onclick="copyText('accountId')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
     </div>
 
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
-    
     tg.ready();
     tg.expand();
 
+    // Получаем данные из Telegram
     const user = tg.initDataUnsafe?.user;
-
     if (user) {
-      document.getElementById('userName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+      document.getElementById('userName').textContent = user.first_name;
+      document.getElementById('userId').textContent = user.id;
       
-      if (user.username) {
-        document.getElementById('userUsername').textContent = '@' + user.username;
-      } else {
-        document.getElementById('userUsername').textContent = 'ID: ' + user.id;
-      }
-
-      if (user.photo_url) {
-        document.getElementById('userAvatar').src = user.photo_url;
-      } else {
-        const avatar = document.getElementById('userAvatar');
-        avatar.style.display = 'none';
-      }
+      // Генерируем фейковый ID аккаунта для красоты
+      const fakeId = '9b3c55b0-' + user.id + '-4f74-8334-13572c96910f';
+      document.getElementById('accountId').textContent = fakeId;
     }
 
+    // Всплывающее окно Telegram
     function showAlert(title, message) {
       tg.showPopup({
         title: title,
         message: message,
         buttons: [{type: 'ok'}]
+      });
+    }
+
+    // Копирование текста
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        tg.showAlert('Скопировано!');
+      }).catch(() => {
+        tg.showAlert('Ошибка копирования');
       });
     }
   </script>
